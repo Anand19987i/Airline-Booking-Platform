@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-    origin: "http://localhost:5173", // Frontend origin
+    origin: ["https://fbtrip-airline-booking.onrender.com", "http://localhost:5173"], // Frontend origin
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
 

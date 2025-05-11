@@ -26,7 +26,6 @@ const MyBookings = () => {
                     },
                 });
                 setBookings(res.data.bookings); // Update bookings state with API response
-                console.log(res.data.bookings);
             } catch (err) {
                 // Handle errors and set error message
                 setError(err.response?.data?.message || 'Failed to fetch bookings.');

@@ -102,8 +102,8 @@ export const bookFlight = async (req, res) => {
             .text('FBTRIP AIRLINES', 50, 50)
             .fontSize(10)
             .fillColor('#666')
-            .text('123 Aviation Way, SkyCity', 50, 75)
-            .text('+1 (800) 123-4567 | www.fbtrip.com', 50, 90)
+            .text('291 Airport Road, SkyCity', 50, 75)
+            .text('+91 999 898 9091 | www.fbtrip-airline-booking.onrender.com', 50, 90)
             .moveTo(50, 105)
             .lineTo(545, 105)
             .lineWidth(1.5)
@@ -137,7 +137,7 @@ export const bookFlight = async (req, res) => {
         doc.text(`Age:`, 50, y)
             .text(`${passengerAge}`, 120, y)
             .text(`Issued:`, 300, y)
-            .text(`${new Date(booking.createdAt).toLocaleString()}`, 400, y);
+            .text(`${new Date(bookedAt).toLocaleString()}`, 400, y);
 
         y += 15;
         doc.text(`Booked by:`, 50, y)
@@ -209,16 +209,6 @@ export const bookFlight = async (req, res) => {
             .text('Terms & Conditions:', 50, y)
             .text('• Ticket non-transferable • Changes may incur fees • Valid government ID required • Baggage fees may apply', 50, y + 12, { width: 500 })
             .text('Security: Keep this document confidential. Report any discrepancies immediately.', 50, y + 30, { width: 500 });
-
-        // ---------------------- BARCODE (Placeholder) ----------------------
-        doc
-            .rect(400, y, 150, 40)
-            .strokeColor('#ccc')
-            .stroke()
-            .fontSize(6)
-            .fillColor('#333')
-            .text('Booking Reference:', 405, y + 5)
-            .text(booking._id, 405, y + 15);
 
         doc.end();
 

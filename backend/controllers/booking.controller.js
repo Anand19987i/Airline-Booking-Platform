@@ -27,20 +27,34 @@ export const bookFlight = async (req, res) => {
             });
         }
 
-        // Price calculation logic
+        // Check and reset flight price if needed
         const now = new Date();
-        const recentBookings = flightData.recentBookings.filter(b =>
-            now - new Date(b.time) <= 10 * 60 * 1000
-        );
+        if (flightData.priceResetAt && new Date(flightData.priceResetAt) < now) {
+            await Flight.findByIdAndUpdate(flight, {
+                $set: { currentPrice: flightData.basePrice },
+                $unset: { priceResetAt: 1 }
+            });
+            flightData.currentPrice = flightData.basePrice;
+            delete flightData.priceResetAt;
+        }
 
-        const bookingsIn5Min = recentBookings.filter(b =>
+        // Calculate surge price
+        const recentBookingsIn5Min = flightData.recentBookings.filter(b =>
             now - new Date(b.time) <= 5 * 60 * 1000
         );
+
+        const uniqueUsers = new Set(recentBookingsIn5Min.map(b => b.user.toString()));
+        const currentUserId = userData._id.toString();
+        let uniqueUserCount = uniqueUsers.size;
+
+        if (!uniqueUsers.has(currentUserId)) {
+            uniqueUserCount += 1;
+        }
 
         let finalPrice = flightData.basePrice;
         let surgeApplied = false;
 
-        if (bookingsIn5Min.length >= 3) {
+        if (uniqueUserCount >= 3) {
             finalPrice = flightData.basePrice * 1.1;
             surgeApplied = true;
         }
@@ -66,19 +80,25 @@ export const bookFlight = async (req, res) => {
             updatedWallet: userData.wallet - finalPrice
         });
 
-        // Update user and flight
+        // Update flight with recent booking and price if surged
+        const updateOperations = {
+            $push: { recentBookings: { time: now, user: userData._id } }
+        };
+
+        if (surgeApplied) {
+            updateOperations.$set = {
+                currentPrice: finalPrice,
+                priceResetAt: new Date(now.getTime() + 10 * 60 * 1000)
+            };
+        }
+
         await Promise.all([
             User.findByIdAndUpdate(user, {
                 $inc: { wallet: -finalPrice },
                 $push: { bookings: booking._id }
             }),
-            Flight.findByIdAndUpdate(flight, {
-                $push: { recentBookings: { time: now, user } },
-                currentPrice: finalPrice,
-                priceResetAt: new Date(now.getTime() + 10 * 60 * 1000)
-            })
+            Flight.findByIdAndUpdate(flight, updateOperations)
         ]);
-
         // Generate professional PDF receipt
         // Generate PDF ticket
         const doc = new PDFDocument({
@@ -136,8 +156,7 @@ export const bookFlight = async (req, res) => {
         y += 15;
         doc.text(`Age:`, 50, y)
             .text(`${passengerAge}`, 120, y)
-            .text(`Issued:`, 300, y)
-            .text(`${new Date(bookedAt).toLocaleString()}`, 400, y);
+            .text(`Issued:`, 300, y);
 
         y += 15;
         doc.text(`Booked by:`, 50, y)

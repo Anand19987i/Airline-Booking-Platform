@@ -49,10 +49,10 @@
         <div className="md:w-48 lg:w-56 flex flex-col justify-center items-end md:items-center md:pl-4">
           <div className="w-full flex flex-col items-end md:items-center">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">₹{flight.currentPrice.toFixed(0)}</span> {/* Current price */}
+              <span className="text-lg font-bold">{flight.currentPrice.toFixed(0)} INR</span> {/* Current price */}
               {flight.currentPrice > flight.basePrice && (
                 <span className={`line-through text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  ₹{flight.basePrice} {/* Base price if current price is higher */}
+                  {flight.basePrice} INR {/* Base price if current price is higher */}
                 </span>
               )}
             </div>

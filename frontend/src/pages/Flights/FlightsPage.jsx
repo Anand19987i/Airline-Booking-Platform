@@ -103,8 +103,8 @@ const FlightsPage = () => {
         params: { ...formData }
       });
 
-      setFlights(response.data.updatedFlights); // Update flights state
-      dispatch(setFlight(response.data.updatedFlights)); // Update Redux store
+      setFlights(response.data.flights); // Update flights state
+      dispatch(setFlight(response.data.flights)); // Update Redux store
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch flights'); // Handle errors
     } finally {

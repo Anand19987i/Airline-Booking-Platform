@@ -8,6 +8,7 @@ dotenv.config({});
 export const searchFlights = async (req, res) => {
     try {
         const { from, to } = req.query;
+        const now = new Date();
 
         const matchCondition = {};
         if (from) matchCondition['from.iata'] = from;
@@ -17,42 +18,29 @@ export const searchFlights = async (req, res) => {
             .sort({ departureTime: 1 })
             .limit(10);
 
-        const now = new Date();
-
-        const updatedFlights = flights.map((flight) => {
-            // Filter recent bookings within 5 minutes for *this* flight
-            const recentBookings = (flight.recentBookings || []).filter((b) =>
-                now - new Date(b.time) <= 5 * 60 * 1000
-            );
-
-            let price = flight.basePrice;
-
-            // If this specific flight has 3+ bookings in last 5 min
-            if (recentBookings.length >= 2) {
-                if (!flight.priceResetAt) {
-                    flight.priceResetAt = now;
-                }
-                price = flight.basePrice * 1.1;
-            } else if (flight.priceResetAt) {
-                const resetTime = new Date(flight.priceResetAt);
-                if (now - resetTime > 10 * 60 * 1000) {
-                    price = flight.basePrice; // reset after 10 minutes
-                    flight.priceResetAt = null;
-                } else {
-                    price = flight.basePrice * 1.1; // still within raised price window
-                }
+        // Reset prices for flights where priceResetAt has expired
+        await Promise.all(flights.map(async (flight) => {
+            if (flight.priceResetAt && flight.priceResetAt < now) {
+                await Flight.findByIdAndUpdate(flight._id, {
+                    $set: { currentPrice: flight.basePrice },
+                    $unset: { priceResetAt: 1 }
+                });
             }
+        }));
 
-            return {
-                ...flight.toObject(),
-                currentPrice: Math.round(price),
-            };
-        });
+        // Fetch updated flight data
+        const updatedFlights = await Flight.find(matchCondition)
+            .sort({ departureTime: 1 })
+            .limit(10);
 
         res.json({
             success: true,
-            updatedFlights,
+            flights: updatedFlights.map(f => ({
+                ...f.toObject(),
+                currentPrice: f.currentPrice || f.basePrice
+            }))
         });
+
     } catch (error) {
         console.error('Error searching flights:', error);
         res.status(500).json({

@@ -86,7 +86,7 @@ const MyBookings = () => {
                                             {new Date(booking.bookedAt).toLocaleString()}
                                         </p>
                                         <p>
-                                            <span className="font-semibold">Price:</span> ₹{booking.price}
+                                            <span className="font-semibold">Price:</span> {Math.ceil(booking.price)} <span className='font-semibold'>INR</span>
                                         </p>
 
                                         {/* Download Receipt Button */}

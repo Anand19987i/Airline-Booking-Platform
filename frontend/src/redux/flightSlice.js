@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   flight: [],
   singleFlight: {},
+  flightInput: {}
+  
 };
 
 const flightSlice = createSlice({
@@ -14,6 +16,9 @@ const flightSlice = createSlice({
     },
     setSingleFlight: (state, action) => {
         state.singleFlight = action.payload;
+    },
+    setFlightInput: (state, action) => {
+        state.flightInput = action.payload;
     }
   },
 });
@@ -21,6 +26,7 @@ const flightSlice = createSlice({
 export const { 
   setFlight, 
   setSingleFlight,
+  setFlightInput
 } = flightSlice.actions;
 
 export default flightSlice.reducer;

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDarkMode } from '../context/ThemeContext';
 import Navbar from '../components/Navbar';
 import { UserIcon } from '@heroicons/react/24/outline'; // Optional icon
+import { updateWallet } from '../redux/authSlice';
 
 const Profile = () => {
   // Get the user data from the Redux store

@@ -22,7 +22,7 @@ const FlightsPage = () => {
     from: '', // Origin airport
     to: '', // Destination airport
   });
-  const { flight } = useSelector(store => store.flight); // Getting flight data from Redux store
+  const { flight, flightInput } = useSelector(store => store.flight); // Getting flight data from Redux store
   const dispatch = useDispatch(); // Redux dispatch function
   const navigate = useNavigate(); // React Router navigation
 
@@ -103,7 +103,7 @@ const FlightsPage = () => {
         params: { ...formData }
       });
 
-      setFlights(response.data.flights); // Update flights state
+      setFlights(response.data.flights);
       dispatch(setFlight(response.data.flights)); // Update Redux store
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch flights'); // Handle errors
@@ -111,6 +111,7 @@ const FlightsPage = () => {
       setSearchLoading(false);
     }
   };
+  console.log(flightInput)
 
   return (
     <div className={`min-h-screen p-6 md:p-10 ${darkMode ? 'bg-zinc-900 text-white' : 'bg-gray-50'}`}>

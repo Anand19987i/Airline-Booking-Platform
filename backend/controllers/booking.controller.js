@@ -101,6 +101,7 @@ export const bookFlight = async (req, res) => {
         ]);
         // Generate professional PDF receipt
         // Generate PDF ticket
+        // I can use cloudinary for storing pdf file but this project is for testing purpose that why i store pdf in the server
         const doc = new PDFDocument({
             size: 'A4',
             margin: 50,
@@ -156,7 +157,6 @@ export const bookFlight = async (req, res) => {
         y += 15;
         doc.text(`Age:`, 50, y)
             .text(`${passengerAge}`, 120, y)
-            .text(`Issued:`, 300, y);
 
         y += 15;
         doc.text(`Booked by:`, 50, y)

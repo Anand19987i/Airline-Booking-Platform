@@ -23,6 +23,10 @@ const bookingSchema = new mongoose.Schema({
     bookedAt: {
         type: Date,
         default: Date.now
+    },
+    surgeApplied: {
+        type: Boolean,
+        default: false,
     }
 });
 

@@ -24,9 +24,9 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-    origin: "https://fbtrip-airline-booking.onrender.com", 
-    // origin: "http://localhost:5173",   // Frontend origin
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    // origin: "https://fbtrip-airline-booking.onrender.com", 
+    origin: "http://localhost:5173",  
+    credentials: true,
 };
 
 // Resolve __dirname and __filename for ES modules
@@ -55,9 +55,9 @@ const serverStart = async () => {
             console.log(`Server is running on http://localhost:${PORT}`); // Log server start
         });
     } catch (error) {
-        console.error("Failed to connect DB", error); // Log database connection error
+        console.error("Failed to connect DB", error); 
         console.error('First Connect to DB');
-        process.exit(1); // Exit process on failure
+        process.exit(1);
     }
 };
 

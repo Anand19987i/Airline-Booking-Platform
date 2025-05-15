@@ -19,6 +19,8 @@ export const searchFlights = async (req, res) => {
             .limit(10);
 
         // Reset prices for flights where priceResetAt has expired
+        // I used promise.all() because it will wait until the all task is not completed.
+        // we can't use directly await with .map() because map function is works asynchronously, it just returns an array
         await Promise.all(flights.map(async (flight) => {
             if (flight.priceResetAt && flight.priceResetAt < now) {
                 await Flight.findByIdAndUpdate(flight._id, {
